@@ -1,6 +1,5 @@
-import os  # first you need to import the module 'os'
+import os
 
-# set the cwd to 'chapter10'
 os.chdir('2021/1')
 
 def star1():
