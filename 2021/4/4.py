@@ -73,6 +73,29 @@ def star1():
     
     print("winning board had pos {} with ball val {} and score {}".format(lowest_pos, winning_board.winning_num, winning_board.winning_score()))
 
+def star2():
+    f = open("4.input", "r")
+    drawn_numbers = next(f).split(",")
+    next(f) # discard blank line
+    boards = []
+    board = []
+    for line in f:
+        if len(line.strip()) == 0:
+            # end of board
+            boards.append(BingoBoard(board=board, drawn_numbers=drawn_numbers))
+            board = []
+        else:
+            board.append(line.strip().split())
+    
+    winning_board = None
+    highest_pos = 0
+    for board in boards:
+        if board.winning_pos > highest_pos:
+            winning_board = board
+            highest_pos = board.winning_pos
+    
+    print("winning board had pos {} with ball val {} and score {}".format(highest_pos, winning_board.winning_num, winning_board.winning_score()))
 
 
-star1()
+# star1()
+star2()
