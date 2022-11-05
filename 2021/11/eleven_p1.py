@@ -121,3 +121,4 @@ filename = "11.input"
 # filename = "11-simple.input"
 # star1(filename)
 star2(filename)
+#test
