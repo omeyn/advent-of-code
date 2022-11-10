@@ -1,93 +1,179 @@
 import os
+from copy import deepcopy
 
 os.chdir('2021/12')
 
-# class Edge:
-#     def __init__(self, start, end):
-#         self.start = start
-#         self.end = end
+class Cave:
+    def __init__(self, name):
+        self.name = name
+        self.connections = []
     
-#     def __str__(self):
-#         return self.start + "->" + self.end
+    def add_connection(self, id):
+        self.connections.append(id)
 
-# def build_path(growing_path, edges):
-#     # growing_path.append(edge)
-#     if growing_path[-1] == "end":
-#         print("got end, stopping")
-#         return growing_path
+    def __str__(self):
+        return f"{self.name} connects to: {self.connections}"
 
-#     for poss in edges:
-#         print("got path {} checking edge {}".format(growing_path, poss))
-#         if poss[0] == growing_path[-1]:
-#             growing_path.append(poss[1])
-#             print("building path, now at {}".format(growing_path))
-#             return build_path(growing_path, edges)
-    
-#     return growing_path
-
-def build_paths(paths, edges):
-    got_more = True
-    x = 0
-    while got_more and x < 5:
-        x += 1
-        print("Got more, paths is {}".format(paths))
-        new_paths = []
-        pops = []
-        for i in range(len(paths)):
-            path = paths[i]
-            print("CHECKING PATH {}".format(path))
-            for edge in edges:
-                # print("checking edge {}".format(edge))
-                # print("comparing {} and {}".format(edge[0], path[-1]))
-                if edge[0] == path[-1]:
-                    new_path = [i for i in path]
-                    new_path.append(edge[1])
+def build_paths(paths, caves):
+    new_paths = []
+    for path in paths:
+        if path[-1] == "end":
+            new_paths.append(path)
+        else:
+            cave = caves.get(path[-1])
+            for exit in cave.connections:
+                if exit != "start":
+                    new_path = deepcopy(path)
+                    new_path.append(exit)
                     new_paths.append(new_path)
-                    # print("got match, new path is {}".format(path))
-                    if edge[1] == "end":
-                        got_more = False
-                    else:
-                        got_more = True
 
-        paths = new_paths
-    return paths
+    return new_paths
 
+def prune_paths(paths):
+    new_paths = []
+    for path in paths:
+        good_path = True
+        counts = {}
+        for cave in path:
+            if cave.islower():
+                if cave in counts:
+                    counts[cave] += 1
+                else:
+                    counts[cave] = 1
+        for cave in counts:
+            if counts[cave] > 1:
+                good_path = False
+        if (good_path):
+            new_paths.append(path)
+    
+    return new_paths
+
+def prune_paths_2(paths):
+    new_paths = []
+    for path in paths:
+        good_path = True
+        counts = {}
+        for cave in path:
+            if cave.islower():
+                if cave in counts:
+                    counts[cave] += 1
+                else:
+                    counts[cave] = 1
+
+        got_double = False
+        for cave in counts:
+            if counts[cave] > 2:
+                good_path = False
+            elif counts[cave] == 2:
+                if got_double:
+                    good_path = False
+                else:
+                    got_double = True
+                
+        if (good_path):
+            new_paths.append(path)
+    
+    return new_paths
+
+# build all caves
+# starting with cave 'start', build paths that go out one cave
+# next iteration, build all the paths from going one cave more than previous step
+# after an iteration, prune all paths that visit small cave more than once
+# if all remaining paths end with cave 'end', we're done
 
 
 def star1(filename):
-    nodes = set()
-    edges = []
+    caves = {}
     f = open(filename, "r")
     for line in f:
         if line.startswith("#"):
             continue
         line = line.strip()
         raw_edge = line.split('-')
-        nodes.add(raw_edge[0])
-        nodes.add(raw_edge[1])
-        edges.append((raw_edge[0], raw_edge[1]))
-    
-    print("")
-    for node in nodes:
-        print(node)
-    print("")
-    for edge in edges:
-        print(edge)
-    print("")
+        if caves.get(raw_edge[0]):
+            caves.get(raw_edge[0]).add_connection(raw_edge[1])
+        else:
+            cave = Cave(raw_edge[0])
+            # print(f"making new cave {cave}")
+            cave.add_connection(raw_edge[1])
+            caves[raw_edge[0]] = cave
+        if caves.get(raw_edge[1]):
+            caves.get(raw_edge[1]).add_connection(raw_edge[0])
+        else:
+            cave = Cave(raw_edge[1])
+            # print(f"making new cave {cave}")
+            cave.add_connection(raw_edge[0])
+            caves[raw_edge[1]] = cave
+
+    start = caves.get('start')
     paths = []
-    for edge in edges:
-        if edge[0] == "start":
-            paths.append(list(edge))
+    for exit in start.connections:
+        path = ['start']
+        path.append(exit)
+        paths.append(path)
 
-    paths = build_paths(paths, edges)
+    # print(f"starting paths {paths}")
+    done = False
+    while not done:
+        paths = build_paths(paths, caves)
+        paths = prune_paths(paths)
+        done = True
+        for path in paths:
+            if path[-1] != 'end':
+                done = False
 
-    for path in paths:
-        print("Got path:")
-        print(path)
-        
+
+    # for path in paths:
+        # print(f"Got path: {path}")
+    print(f"Total path count is: {len(paths)}")
+
+def star2(filename):
+    caves = {}
+    f = open(filename, "r")
+    for line in f:
+        if line.startswith("#"):
+            continue
+        line = line.strip()
+        raw_edge = line.split('-')
+        if caves.get(raw_edge[0]):
+            caves.get(raw_edge[0]).add_connection(raw_edge[1])
+        else:
+            cave = Cave(raw_edge[0])
+            # print(f"making new cave {cave}")
+            cave.add_connection(raw_edge[1])
+            caves[raw_edge[0]] = cave
+        if caves.get(raw_edge[1]):
+            caves.get(raw_edge[1]).add_connection(raw_edge[0])
+        else:
+            cave = Cave(raw_edge[1])
+            # print(f"making new cave {cave}")
+            cave.add_connection(raw_edge[0])
+            caves[raw_edge[1]] = cave
+
+    start = caves.get('start')
+    paths = []
+    for exit in start.connections:
+        path = ['start']
+        path.append(exit)
+        paths.append(path)
+
+    # print(f"starting paths {paths}")
+    done = False
+    while not done:
+        paths = build_paths(paths, caves)
+        paths = prune_paths_2(paths)
+        done = True
+        for path in paths:
+            if path[-1] != 'end':
+                done = False
+
+
+    # for path in paths:
+    #     print(f"Got path: {path}")
+    print(f"Total path count is: {len(paths)}")
+
 filename = "12.input"
-filename = "12-test.input"
-filename = "12-test2.input"
-filename = "12-simple.input"
-star1(filename)
-#star2(filename)
+# filename = "12-test.input"
+# filename = "12-simple.input"
+# star1(filename)
+star2(filename)
