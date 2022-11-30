@@ -34,7 +34,7 @@ def star1(filename):
     #     print(f"{sub}-{subs[sub]}")
 
     print(f"starting template {template}")
-    for x in range(4):
+    for x in range(2):
         template = do_subs(template, subs)
         print(f"new template {template}")
         print(f"After step {x+1} template length is {len(template)}")

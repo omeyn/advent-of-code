@@ -4,6 +4,10 @@ import secrets
 
 os.chdir('2021/14')
 
+############
+# Failed, naive attempt to build an infinite string (extending what worked for p1)
+############
+
 def do_subs(template, subs2, subs4={}, subs8={}):
     new_template = ""
     i = 0
