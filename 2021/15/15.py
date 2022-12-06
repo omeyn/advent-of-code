@@ -132,6 +132,6 @@ def star1(filename):
   # build_real_paths(map, best_known_score)
 
 filename = "15.input"
-# filename = "15-test.input"
+filename = "15-test.input"
 # filename = "15-simple.input"
 star1(filename)
