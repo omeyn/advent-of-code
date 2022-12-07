@@ -42,7 +42,7 @@ def visualize(filename):
 
 filename = "7.input"
 # filename = "7-test2.input"
-filename = "7-test.input"
+# filename = "7-test.input"
 
 # debug(filename)
 visualize(filename)
