@@ -3,6 +3,15 @@ import sys
 
 os.chdir('2023/5')
 
+# tried the dumb way and didn't work, took 12 hrs?
+# got new min location 1852510996
+# got new min location 662918194
+# got new min location 350004378
+# got new min location 201731623
+# got new min location 47238415
+# got new min location 24261546
+# min location is 24261546
+
 class Range:
     def __init__(self, source_range_start: int, dest_range_start: int, range_size: int):
         self.source_range_start = source_range_start
