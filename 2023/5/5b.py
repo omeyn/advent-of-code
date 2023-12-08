@@ -1,7 +1,7 @@
 import os
 import sys
 
-os.chdir('2023/5')
+# os.chdir('2023/5')
 
 # tried the dumb way and didn't work, took 12 hrs?
 # got new min location 1852510996
@@ -45,8 +45,16 @@ def star1(input_file):
     f = open(input_file, "r")
     raw_seeds = [int(x) for x in f.readline().split(':')[1].strip().split(' ')]
     seed_sets = []
+    min_seed = 50000000000
+    max_seed = 0
     for i in range(0, len(raw_seeds), 2):
+        if raw_seeds[i] < min_seed:
+            min_seed = raw_seeds[i]
+        if raw_seeds[i] + raw_seeds[i+1] > max_seed:
+            max_seed = raw_seeds[i] + raw_seeds[i+1]
         seed_sets.append([raw_seeds[i], raw_seeds[i+1]])
+
+    print(f'min seed {min_seed} max seed {max_seed}')
 
     f.readline()
     lookups = {}
@@ -65,7 +73,7 @@ def star1(input_file):
     # print(lookups)
     min_location = sys.maxsize
     for seed_set in seed_sets:
-        for i in range(seed_set[1]):
+        for i in range(seed_set[1]+1):
             seed = seed_set[0] + i
             soil = lookups['seed-to-soil'].find_dest_for_source(seed)
             fert = lookups['soil-to-fertilizer'].find_dest_for_source(soil)
@@ -76,12 +84,12 @@ def star1(input_file):
             location = lookups['humidity-to-location'].find_dest_for_source(humid)
         #     print(f"seed {seed} soil {soil} fert {fert} water {water} light {light} temp {temp} humid {humid} location {location}")
             if location < min_location:
-                print(f'got new min location {location}')
+                print(f'got new min location {location} for seed {seed}')
                 min_location = location
 
     print(f'min location is {min_location}')
 
 
 input = "5-test.input"
-input = "5.input"
+input = "5-10.input"
 star1(input)
