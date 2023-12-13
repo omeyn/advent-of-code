@@ -1,5 +1,6 @@
 import os
 import re
+import numpy as np
 
 os.chdir('2023/8')
 
@@ -32,24 +33,29 @@ def star1(input_file):
             node_set.append(node)
     print(f'starting nodes: {node_set}')
 
-    i = -1
-    while True:
-        i += 1
-        # print(f'check i {i}')
-        moves += 1
-        new_nodes = []
-        for node in node_set:
+    min_moves = []
+    for start_node in node_set:
+        node = start_node
+        moves = 0
+        i = -1
+        no_z = True
+        while no_z:
+            i += 1
+            # print(f'check i {i}')
+            moves += 1
             if right_left[i] == 'L':
-                new_nodes.append(nodes[node][0])
+                node = nodes[node][0]
             else:
-                new_nodes.append(nodes[node][1])
-        if all_z(new_nodes):
-            print(f'got all end in Z {new_nodes}, moves: {moves}')
-            break
-        else:
-            node_set = new_nodes
-        if i == len(right_left)-1:
-            i = -1
+                node = nodes[node][1]
+            if node.endswith('Z'):
+                print(f'for start {start_node} got end in Z {node}, moves: {moves}')
+                min_moves.append(moves)
+                no_z = False
+                break
+            if i == len(right_left)-1:
+                i = -1
+
+    print(f'least common multiple {np.lcm.reduce(min_moves)}')
 
 
 # input = "8-test.input"
