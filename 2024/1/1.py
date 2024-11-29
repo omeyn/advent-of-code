@@ -12,3 +12,4 @@ def star1(input_file):
 input = "1-test.input"
 input = "1.input"
 star1(input)
+
