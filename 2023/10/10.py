@@ -137,7 +137,7 @@ def star1(input_file):
                     current_node.north = next_node
                     next_node.south = current_node
         if next_node.pipe_type == 'S':
-            print("Found S, stopping")
+            # print("Found S, stopping")
             searching = False
         else:
             pipe_path.append(next_node)
